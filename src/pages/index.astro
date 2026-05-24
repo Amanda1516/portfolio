@@ -1,0 +1,112 @@
+---
+import Base from '../layouts/Base.astro';
+
+const categories = [
+  { id: 'books', name: '📚 好书推荐', icon: 'books', desc: '让文字温暖你的灵魂' },
+  { id: 'growth', name: '🌱 个人成长', icon: 'growth', desc: '记录每一次突破' },
+  { id: 'travel', name: '✈️ 旅行攻略', icon: 'travel', desc: '走向世界的角落' }
+];
+
+const articles = {
+  books: [
+    { title: '《百年孤独》- 家族的轮回与命运', desc: '布恩迪亚家族的七代人，每一个名字都在诉说着孤独...', date: '2026-05-20', views: 234 },
+    { title: '《活着》- 生命的韧性', desc: '余华用最朴实的文字讲述最深刻的生命哲学', date: '2026-05-15', views: 189 },
+    { title: '《瓦尔登湖》- 寻找内心的宁静', desc: '梭罗独自生活的两年六个月零两天', date: '2026-05-10', views: 156 }
+  ],
+  growth: [
+    { title: '30岁，我终于明白了这5件事', desc: '年龄只是一个数字，成长的道路上永远没有太晚', date: '2026-05-18', views: 312 },
+    { title: '如何培养深度思考的习惯', desc: '每天15分钟，让你的思维跨越一个新的高度', date: '2026-05-12', views: 267 },
+    { title: '对抗焦虑的100种方法', desc: '在这个快节奏的时代与自己和解', date: '2026-05-08', views: 445 }
+  ],
+  travel: [
+    { title: '云南大理 - 风花雪月的故事', desc: '苍山洱海旁，寻找内心的平静', date: '2026-05-16', views: 378 },
+    { title: '西藏拉萨 - 朝圣之旅', desc: '一路向西，寻找信仰的力量', date: '2026-05-11', views: 523 },
+    { title: '日本京都 - 千年的宁静', desc: '在寺庙与神社之间感受时间的流逝', date: '2026-05-06', views: 412 }
+  ]
+};
+---
+
+<Base title="冬去春来 - 个人作品集">
+  <section class="intro" id="about">
+    <p class="tagline">让文字记录成长 · 让足迹丈量世界</p>
+    <p class="sub-tagline">Reading & Writing & Traveling</p>
+  </section>
+
+  <nav class="categories">
+    {categories.map(cat => (
+      <button class="cat-btn" data-category={cat.id}>{cat.name}</button>
+    ))}
+  </nav>
+
+  <div class="article-list">
+    {Object.entries(articles).map(([catId, items]) => (
+      <div class="category-group" data-cat={catId}>
+        {items.map(article => (
+          <article class="article-card">
+            <h3 class="article-title">{article.title}</h3>
+            <p class="article-desc">{article.desc}</p>
+            <div class="article-meta">
+              <span>{article.date}</span> ·
+              <span>👁 {article.views}</span>
+            </div>
+
+            <!-- 打赏模块 -->
+            <div class="tip-section">
+              <div class="tip-title">☕ 支持创作</div>
+              <div class="tip-images">
+                <img src="/tips/wechat.svg" alt="微信打赏" class="tip-img" onclick="alert('请添加微信收款码图片到 public/tips/ 目录')"/>
+                <img src="/tips/alipay.svg" alt="支付宝打赏" class="tip-img" onclick="alert('请添加支付宝收款码图片到 public/tips/ 目录')"/>
+              </div>
+            </div>
+
+            <!-- Giscus 评论 - 配置说明: 访问 https://giscus.app 启用 Discusions 并获取配置 -->
+            <!-- 配置步骤: 1.创建GitHub仓库 2.安装giscus app 3.访问giscus.app获取配置 -->
+            <div id="giscus-wrapper" style="display:none;">
+              <div class="giscus-placeholder" style="color:#666;text-align:center;padding:20px;">
+                <p>💡 评论系统需要配置 GitHub</p>
+                <p style="font-size:0.85rem;color:#888;">
+                  1. 创建一个公开的 GitHub 仓库<br/>
+                  2. 访问 <a href="https://giscus.app" target="_blank" style="color:#d4af37;">giscus.app</a> 获取配置<br/>
+                  3. 将配置信息填入此处
+                </p>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    ))}
+  </div>
+
+  <style>
+    .intro { text-align: center; padding: 60px 0; }
+    .tagline { font-size: 1.8rem; margin-bottom: 10px; }
+    .sub-tagline { color: #888; letter-spacing: 3px; }
+
+    .category-group { display: none; }
+    .category-group:first-child { display: block; }
+
+    .cat-btn.active + .cat-btn + .cat-btn + .category-group,
+    .cat-btn:first-child:checked ~ .article-list .category-group:first-child { display: block; }
+
+    .tip-img { opacity: 0.7; width: 120px; }
+    .tip-img:not([src]), .tip-img[src=""], .tip-img[src="/tips/wechat.png"]:not([src]) { opacity: 0.3; }
+    .tip-img[alt]:not([alt=""]) { opacity: 0.7; }
+  </style>
+
+  <script>
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const cat = btn.dataset.category;
+        document.querySelectorAll('.category-group').forEach(g => {
+          g.style.display = g.dataset.cat === cat ? 'block' : 'none';
+        });
+      });
+    });
+
+    // 默认显示第一个分类激活
+    document.querySelector('.cat-btn').classList.add('active');
+  </script>
+</Base>
